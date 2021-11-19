@@ -2,92 +2,108 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * 
+ * @author Thorleif Harder
+ * Spielname: Hangman 
+ * Datum: 19.11.2021
+ */
+
 public class Hangman {
-	public static boolean nichtgeloest = true;
+	public static boolean nichtGeloest = true;
 
 	@SuppressWarnings({ "resource" })
-	public static void main(String[] aflkchn) {
-		Scanner in = new Scanner(System.in);
-		int fzaehler = 1;
-		String zuwo = suchwort();
-		String loesung = loesung(zuwo);
-		String loesungl = "";
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		int fehlerZaehler = 1;
+		final String zufallsWort = suchwort();
+		String loesung = loesung(zufallsWort);
+		String loesungLeerzeichen = "";
 		String eingaben = "";
-		String eingabenz = "";
+		String getätigteEingaben = "";
 
 		System.out.println("Spielen wir Hangman!\n");
-		System.out.println(bilder(1));
-		System.out.println(loesungl(loesung));
+		System.out.println(zeigeHangman(1));
+		System.out.println(leerzeichenLoesung(loesung));
+		System.out.println(loesungLeerzeichen);
 
-		System.out.println(loesungl);
-		while (nichtgeloest) {
+		
+		while (nichtGeloest) {
 			System.out.print("\nRaten sie einen Buchstaben: ");
-			String e = in.nextLine().toUpperCase();
-			if (e.length() > 0)
-				eingabenz += e + ", ";
-			while (e.length() < 1 | e.length() > 1) {
+			String eingabeNutzende = scanner.nextLine().toUpperCase();
+			if (eingabeNutzende.length() > 0)
+				getätigteEingaben += eingabeNutzende + ", ";
+
+			while (eingabeNutzende.length() < 1 | eingabeNutzende.length() > 1) {
 				System.out.println("Deine Eingabe ist falsch!" + "\n Mach eine neue Eingabe: ");
-				e = in.nextLine().toUpperCase();
-				if (e.length() > 0)
-					eingabenz += e + ", ";
+				eingabeNutzende = scanner.nextLine().toUpperCase();
+				if (eingabeNutzende.length() > 0)
+					getätigteEingaben += eingabeNutzende + ", ";
 			}
-			loesung = hngmn(zuwo, e, loesung);
-			if (zuwo.contains(e) && (!eingaben.contains(e))) {
-				loesungl = "";
-				System.out.println("\n" + loesungl(loesung) + "\nBereits gemachte Eingaben: " + eingabenz);
-			} // if-Abfrage
-			else {
-				loesungl = "";
-				fzaehler++;
-				System.out.println("\n" + bilder(fzaehler) + "\nDer Buchstabe ist falsch!\n");
-				System.out.println("\n" + loesungl(loesung) + "\nBereits gemachte Eingaben: " + eingabenz);
-			} // else-Anweisung
-			eingaben += e;
+			loesung = hngmn(zufallsWort, eingabeNutzende, loesung);
 
-			if (fzaehler >= 7) {
-				nichtgeloest = false;
+		
+			if (zufallsWort.contains(eingabeNutzende) && !eingaben.contains(eingabeNutzende)) {
+				loesungLeerzeichen += "";
+				System.out.println(
+						"\n" + leerzeichenLoesung(loesung) + "\nBereits gemachte Eingaben: " + getätigteEingaben);
+			} else {
+				loesungLeerzeichen += "";
+				fehlerZaehler++;
+				System.out.println("\n" + zeigeHangman(fehlerZaehler) + "\nDer Buchstabe ist falsch!\n");
+				System.out.println(
+						"\n" + leerzeichenLoesung(loesung) + "\nBereits gemachte Eingaben: " + getätigteEingaben);
 			}
-			if (loesung.equals(zuwo)) {
-				nichtgeloest = false;
+			eingaben += eingabeNutzende;
+
+			if (fehlerZaehler >= 7) {
+				nichtGeloest = false;
+			}
+			if (loesung.equals(zufallsWort)) {
+				nichtGeloest = false;
 			}
 
-		} // while-Schleife
-		if (loesung.equals(zuwo))
-			System.out.println("\nDu hast das Wort mit nur " + (fzaehler - 1) + " Fehlern richtig erraten!");
-		if (fzaehler >= 7)
-			System.out.println("\nHangman haengt!\nMein Wort lautete: " + zuwo);
-	}// main
+		}
 
+		if (loesung.equals(zufallsWort)) {
+			System.out.println("\nDu hast das Wort mit nur " + (fehlerZaehler - 1) + " Fehlern richtig erraten!");
+		}
+		if (fehlerZaehler >= 7) {
+			System.out.println("\nHangman haengt!\nMein Wort lautete: " + zufallsWort);
+		}
+
+	}
 	/**
 	 * Erzeugt einen String aus einem reingegebenen Wortes, welcher alle Zeichen
 	 * durch ein Leerzeichen trennt.
 	 *
-	 * @param loesung Ein String, dessen Zeichen durch Leerzeichen getrennt werden
-	 *                sollen.
-	 * @return Gibt einen Sting zurueck, der die Zeichen eines in die Methode
+	 * @param loesung: Ein String, dessen Zeichen durch Leerzeichen getrennt werden
+	 *                 sollen.
+	 * @return Gibt einen String zurueck, der die Zeichen eines in die Methode
 	 *         gegebenen Wortes durch Leerzeichen trennt.
 	 */
-	public static String loesungl(String loesung) {
-		String loesungl = "";
+	public static String leerzeichenLoesung(String loesung) {
+		String loesungLeerzeichen = "";
 		for (char c : loesung.toCharArray()) {
-			loesungl += c + " ";
+			loesungLeerzeichen += c + " ";
 		}
-		return loesungl;
+		return loesungLeerzeichen;
 	}
 
 	/**
 	 * Erzeugt einen String aus Unterstrichen, welcher die Laenge des Zufallswortes
 	 * hat.
 	 * 
-	 * @param zuwo - Ein String, der die Laenge des auszugebenden Strings bestimmt.
+	 * @param zufallsWortLaenge: Ein String, der die Laenge des auszugebenden
+	 *                           Strings bestimmt.
 	 * @return Gibt einen String aus Unterstrichen mit der Laenge des in die Methode
 	 *         gegebenen Wortes zurueck.
 	 */
-	public static String loesung(String zuwo) {
+	public static final String loesung(String zufallsWortLaenge) {
 		String loesung = "";
-		for (int i = 0; i < zuwo.length(); i++) {
+		for (int i = 0; i < zufallsWortLaenge.length(); i++) {
 			loesung += "_";
-		} // for-Schleife
+		}
 		return loesung;
 	}
 
@@ -98,39 +114,37 @@ public class Hangman {
 	 */
 	public static String suchwort() {
 		String ausgabe = "";
-		List<String> words = Arrays.asList("Adler");
-		ausgabe = (words.get((int) (Math.random() * words.size())).toUpperCase());
+		final List<String> woerter = Arrays.asList("Adler");
+		ausgabe = woerter.get((int) (Math.random() * woerter.size())).toUpperCase();
 		return ausgabe;
 	}
 
 	/**
 	 * Erstellt einen String unter Beruecksichtigung des Zufallswortes. Falls der
 	 * Buchstabe der Stelle null des eingegebene Strings im Zufallswort enthalten
-	 * ist, wird er an den String an der geprueften Stelle eingesetzt. Falls nicht,
-	 * wird stattdessen die Stelle mit dem gleichen Index aus dem loesung-String an
-	 * dem String eingefuegt.
+	 * ist, wird er an den String an der geprueften Stelle eingesetzt.
 	 * 
-	 * @param zuwo    - Aus vorgegebener Liste generiertes Zufallswort als
-	 * @param e       - Nicht leerer, vom Nutzer eingegebener String.
-	 * @param loesung - String mit der Laenge des Zufallswortes, welcher zum Start
-	 *                des Programms aus Unterstrichen besteht. Die Unterstriche
-	 *                werden nach und nach durch richtige Nutzereingaben an den
-	 *                richtigen index-Stellen ersetzt.@return String, der sich aus
-	 *                den richtigen Nutzereingaben zusammensetzt, bzw an den
-	 *                uebrigen oder bei falscher Eingabe aus Unterstrichen.
+	 * @param zufallsWort: Aus vorgegebener Liste generiertes Zufallswort als
+	 * @param eingabe:     Nicht leerer, vom Nutzer eingegebener String.
+	 * @param loesung:     String mit der Laenge des Zufallswortes, welcher zum
+	 *                     Start des Programms aus Unterstrichen besteht. Die
+	 *                     Unterstriche werden nach und nach durch richtige
+	 *                     Nutzereingaben an den richtigen index-Stellen ersetzt.
+	 * 
+	 * @return String, der sich aus den richtigen Nutzereingaben zusammensetzt, bzw
+	 *         an den uebrigen oder bei falscher Eingabe aus Unterstrichen.
 	 */
-	public static String hngmn(String zuwo, String e, String loesung) {
+	public static final String hngmn(String zufallsWort, String eingabe, String loesung) {
 
 		String ausgabe = "";
-		char ebuch = e.charAt(0);
+		final char ebuch = eingabe.charAt(0);
 		int index = -1;
-		for (char c : zuwo.toCharArray()) {
+		for (char c : zufallsWort.toCharArray()) {
 			index++;
-			if (ebuch == c) { // Eingabe gleich geprueften Buchstabe
-				ausgabe += c; // Wenn ja, Ausgabestring + diesen Buchstaben
+			if (ebuch == c) {
+				ausgabe += c;
 			} else {
 				ausgabe += loesung.charAt(index);
-				// Wenn nein, Ausgabestring + die Indexstelle des Unterstrichstring
 			}
 		}
 		return ausgabe;
@@ -140,23 +154,23 @@ public class Hangman {
 	 * Erzeugt einen String, der je nach Eingabe die einzelnen Stadien des
 	 * Hangman-Galgen beinhaltet.
 	 * 
-	 * @param i Eine ganze Zahl zwischen 1 und 7 die bestimmt, welches Stadium des
-	 *          Hangman-Galgen in dem Ausgabe-String eingefuegt werden soll.
+	 * @param zaehler: Eine ganze Zahl zwischen 1 und 7 die bestimmt, welches
+	 *                 Stadium des Hangman-Galgen in dem Ausgabe-String eingefuegt
+	 *                 werden soll.
 	 * @return Gibt einen String zurueck, welcher den Hangman-Galgen des
 	 *         entsprechend festgelegten Stadiums enthaelt.
 	 */
-	public static String bilder(int i) {
-		String ausgabe = "";
-		if (i == 1) {
-			ausgabe += (" +-----+" + "\n");
-			ausgabe += (" |/" + "\n");
-			ausgabe += (" |" + "\n");
-			ausgabe += (" |" + "\n");
-			ausgabe += (" |" + "\n");
-			ausgabe += (" ***" + "\n");
-			ausgabe += ("************" + "\n");
+	public static StringBuffer zeigeHangman(final int zaehler) {
+		final StringBuffer ausgabe = new StringBuffer();
+		if (zaehler == 1) {
+			ausgabe.append(" +-----+" + "\n")
+				.append(" |/" + "\n")
+				.append(" |" + "\n")
+				.append(" |" + "\n")
+				.append(" |" + "\n")
+				.append(" ***" + "\n")
+				.append("************" + "\n");
 		}
-		// ...
 		return ausgabe;
 	}
 }
