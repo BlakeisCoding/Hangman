@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../../../Documents/Hangman"
+		},
+		{
+			"path": "../bin"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
